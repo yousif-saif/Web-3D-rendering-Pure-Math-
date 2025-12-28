@@ -81,10 +81,6 @@ function project({x, y, z}) {
 clear()
 
 
-// function calcDist3D({x, y, z}, {x, y, z}) {
-    
-// }
-
 
 
 class Square {
@@ -121,9 +117,7 @@ class Square {
         return this.l * this.l
     }
 
-    // fill() {
-        
-    // }
+
 }
 
 
@@ -141,8 +135,6 @@ class Cube {
     }
 
     getEdges() {
-        // console.log(this.l)
-        // const edges = []
         const edges = [
             {x: -this.x, y: this.y, z: this.z},
             {x: this.x, y: this.y, z: this.z},
@@ -155,20 +147,7 @@ class Cube {
             {x: -this.x, y: -this.y, z: -this.z},
 
         ]
-        // // console.log(edges)
-        
-        // const edges = []
-        // for (let edge of this.face.getEdges()) {
-        //     edges.push({x: edge.x, y: edge.y, z: this.z})
 
-        // }
-
-        // for (let edge of this.face.getEdges()) {
-        //     edges.push({x: edge.x, y: edge.y, z: -this.z})
-
-        // }
-
-        // console.log(edges)
 
         return edges
 
@@ -205,36 +184,6 @@ class Cube {
     }
 
 }
-
-// let test = new Cube({x: 10, y: 10, z: 10}, 5)
-// console.log(test.getEdges())
-
-// vs = [
-//     {x: 0.3, y: 0.3, z: 0.3}, // tl
-//     {x: -0.3, y: 0.3, z: 0.3}, // tr
-//     {x: -0.3, y: -0.3, z: 0.3}, // br
-//     {x: 0.3, y: -0.3, z: 0.3}, // bl
-
-//     {x: 0.3, y: 0.3, z: -0.3},
-//     {x: -0.3, y: 0.3, z: -0.3},
-//     {x: -0.3, y: -0.3, z: -0.3},
-//     {x: 0.3, y: -0.3, z: -0.3},
-
-// ]
-
-// const faces = [
-//     [0, 1, 2, 3],
-//     [4, 5, 6, 7],
-//     // [0, 4],
-//     // [1, 5],
-//     // [2, 6],
-//     // [3, 7],
-
-// ]
-
-// function drawFaces() {
-    
-// }
 
 
 function translateZ({x, y, z}, dz) {
@@ -330,32 +279,7 @@ function frame() {
     }
 
 
-
-
-    // colorSide(
-    //     screenPoint(translateZ(rotate_y(edges[0], theta), dz)),
-    //     screenPoint(translateZ(rotate_y(edges[1], theta), dz)),
-    // )
-
-
-    // for (f of faces) {
-    //     for (let i=0; i < f.length; i++) {
-    //         const p1 = vs[f[i]]
-    //         const p2 = vs[f[(i+1) % f.length]]
-    //         // console.log(dz)
-    //         line(
-    //             // screen(project(translateZ(rotate_y(p1, theta), beta), dz)),
-    //             // screen(project(translateZ(rotate_y(p2, theta), beta), dz)),
-    //             screenPoint(translateZ(rotate_y(p1, theta), dz)),
-    //             screenPoint(translateZ(rotate_y(p2, theta), dz)),
-
-    //         )
-
-    //     }
-
-    // }
-
-    // setTimeout(frame, 1000/FPS)
+    setTimeout(frame, 1000/FPS)
 
 }
 
