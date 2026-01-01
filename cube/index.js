@@ -7,7 +7,7 @@ h = game.height
 const COLOR = "green"
 const BACKGROUND = "black"
 const SIZE = 5
-
+const LIGHT_POINT = {x: 0, y: 0, z: 1}
 
 function clear() {
     ctx.fillStyle = BACKGROUND
@@ -15,16 +15,17 @@ function clear() {
 }
 
 
-function point({x, y}) {
-    ctx.fillStyle = COLOR
-    const halfSize = SIZE/2
-    ctx.fillRect(x-halfSize, y-halfSize, SIZE, SIZE)
+function point({x, y}, color=COLOR, size=SIZE) {
+    ctx.fillStyle = color
+    const halfSize = size/2
+    ctx.fillRect(x-halfSize, y-halfSize, size, size)
 
     return {x, y}
 }
 
 
 function line(p1, p2) {
+    // console.log(x1)
     ctx.lineWidth = 3
     ctx.strokeStyle = COLOR
     ctx.beginPath()
@@ -80,7 +81,12 @@ function project({x, y, z}) {
 
 clear()
 
-
+function calcDist3D(p1, p2) {
+    return Math.sqrt(
+        Math.pow(p2.x-p1.x, 2) + Math.pow(p2.y-p1.y, 2) + Math.pow(p2.z-p1.z, 2)
+    )
+    
+}
 
 
 class Square {
@@ -123,10 +129,6 @@ class Square {
 
 class Cube {
     constructor({x, y, z}, l) {
-        if (!x || !y || !z || !l) {
-            console.log("Provide all the parameters")
-        }
-
         this.x = x
         this.y = y
         this.z = z
@@ -148,12 +150,11 @@ class Cube {
 
         ]
 
-
         return edges
 
     }
 
-    fill(step = 0.05) {
+    render(step, dz, theta, beta) {
         const fillarPoints = []
         const edges = this.getEdges()
         const half = this.l
@@ -166,20 +167,54 @@ class Cube {
                     z: edges[0].z                    
                 }
                 
-                const side1 = rotate_x({x: p3d.x, y: p3d.y, z: p3d.z}, Math.PI/2)
-                const side2 = rotate_x({x: p3d.x, y: p3d.y, z: p3d.z}, -Math.PI/2)
-                fillarPoints.push(side1)
-                fillarPoints.push(side2)
+                
+                for (let pi of [Math.PI/2, -Math.PI/2]) {                    
+                    const sideX = rotate_x({x: p3d.x, y: p3d.y, z: p3d.z}, pi)
+                    // const tz = translateZ(rotate_y(sideX, theta), dz)
+                    const tz = translateZ(rotate_x(rotate_y(sideX, theta), beta), dz)
+                    const sp = screenPoint(tz)
+                    if (Math.abs(tz.z) < 0.7) {
+                        point(sp, `color-mix(in oklab, ${COLOR} 10%, white 50%)`)
+                        // point(sp, "RED")
+
+                    } else {
+                        point(sp)
+                    }
+                    
+                }
 
 
                 for (let angle=0; angle < Math.PI*2; angle+=Math.PI/2) {
                     const side = rotate_y(p3d, angle)
                     
-                    fillarPoints.push(side)
+                    // const tz = translateZ(rotate_y(side, theta), dz)
+                    const tz = translateZ(rotate_x(rotate_y(side, theta), beta), dz)
+
+                    const sp = screenPoint(tz)
+
+                    if (Math.abs(tz.z) < 0.7) {
+                        point(sp, `color-mix(in oklab, ${COLOR} 10%, white 50%)`)
+                        // point(sp, "RED")
+
+                    } else {
+                        point(sp)
+                    }
+                    
+
+                    // its not correct but it makes a cool animation
+                    // if (cross > 0) {
+                        // point(screenPoint(translateZ(rotate_y(side, theta), dz)), COLOR)
+                        
+                    // } else {
+                    //     point(screenPoint(translateZ(rotate_y(side, theta), dz)), "RED")
+
+                    // }
+                        
 
                 }
             }
         }
+
         return fillarPoints
     }
 
@@ -191,6 +226,7 @@ function translateZ({x, y, z}, dz) {
         x, y, z: z + dz
     }
 }
+
 
 function rotate_y({x, y, z}, angle) {
     const cos = Math.cos(angle)
@@ -245,6 +281,7 @@ function plot3D({x, y, z}) {
     return screen
 }
 
+
 const FPS = 60
 dz = 1
 theta = 0
@@ -259,24 +296,9 @@ function frame() {
     theta += Math.PI / 2 * dt
     beta += Math.PI / 2 * dt
     clear()
+    // point(screenPoint(LIGHT_POINT), COLOR, 20)
+    cube.render(0.07, dz, theta, beta)
 
-
-    let fillarPoints = cube.fill(0.1, dz)
-    
-
-
-    for (let i in fillarPoints) {
-        // let points = screenPoint(translateZ(rotate_y(fillarPoints[i], theta), dz))
-        let points = screenPoint(translateZ(rotate_x(rotate_y(fillarPoints[i], theta), beta), dz))
-
-        point(points)
-        
-        // line(
-        //     points,
-        //     screenPoint(translateZ(rotate_y(edges[(i+1) % edges.length], theta), dz))
-        // )
-
-    }
 
 
     setTimeout(frame, 1000/FPS)
